@@ -1,0 +1,56 @@
+POLYNOMIAL REGRESSION PSEUDOCODE
+The problem statement for this dataset is to build a regression model that can predict the miles per gallon (mpg) of a car based on its other attributes, such as the number of cylinders, displacement, horsepower, weight, acceleration, model year, and origin. This can be useful in predicting the fuel efficiency of new car models or in analyzing the factors that contribute to a car's fuel economy.
+####Import libraries
+ import numpy as np – To perform mathematical operations on arrays.
+ import pandas as pd – To load the Data frame.
+ import  matplotlib.pyplot as plt – To visualize the data features.
+ import seaborn as sns – To see the correlation between features using heat map.
+###Load the data and understanding the data
+df=pd.read_csv('mpg.csv') 
+##EDA-Exploratory Data Analysis
+df.head()
+df.tail()
+df.info()
+df.describe()
+##Preprocessing the data
+Finding the null values-df.isnull().sum()
+Removing the null values
+Dropping the categorical attributes
+For visualization we use boxplot,countplot,pairplot and for correlation we use heatmap.
+plt.countplot()
+sns.heatmap(.corr())
+plt.boxplot()
+sns.pairplot()
+
+# Define features (predictors) and target
+X = df.iloc[:, 1:-1].values
+y = df.iloc[:, 0].values
+
+# Split the dataset into training and test sets
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+
+####Building the Polynomial Regression Model
+# Define polynomial degree
+degree = 2
+
+# Create polynomial features
+X_train_poly = np.ones((X_train.shape[0], 1))
+X_test_poly = np.ones((X_test.shape[0], 1))
+
+for d in range(1, degree+1):
+    X_train_poly = np.concatenate((X_train_poly, X_train**d), axis=1)
+    X_test_poly = np.concatenate((X_test_poly, X_test**d), axis=1)
+
+# Fit the polynomial regression model
+theta = np.linalg.inv(X_train_poly.T @ X_train_poly) @ X_train_poly.T @ y_train
+
+# Predict on test data
+y_pred = X_test_poly @ theta
+
+# Calculate the mean squared error
+mse = np.mean((y_test - y_pred)**2)
+print(f"Mean Squared Error: {mse:.2f}")    
+
+
